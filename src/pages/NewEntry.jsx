@@ -1,7 +1,8 @@
 import {useState, useEffect} from 'react'
 import { useAppState } from '../AppState'
 
-function NewEntry(props){
+function NewEntry({newFoodEntry}){
+    const {state, dispatch} = useAppState()
 
     const [formData, setFormData] = useState({
         food: "",
@@ -14,7 +15,27 @@ function NewEntry(props){
 
     const handleSubmit = (event) =>{
         event.preventDefault();
-
+        const token = JSON.parse(window.localStorage.getItem("auth")).token
+        return fetch(state.url+ "foods",{
+            method: "post",
+            headers: { "Authorization": "Bearer " + token,
+            "Content-Type": "application/json"},
+            body: JSON.stringify({product: formData.product, 
+                calories: formData.calories, 
+                date: formData.date,
+                time: formData.time})})
+        .then( (response) => {
+            if(response.ok){
+                return response.json()
+            }
+            else{
+                throw new Error("An error of type " + response.status + " occured")
+            };
+        })
+        .then((data)=>{
+            console.log(data)})
+        .catch((error) => {window.alert(error)}
+        );
     }
     return(
         <div>
@@ -22,7 +43,7 @@ function NewEntry(props){
             <form onSubmit={handleSubmit}>
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="basic-addon1">Food Name</span>
-                    <input onChange={handleChange} name="food" type="text" class="form-control" placeholder="New Food" aria-label="New Food" aria-describedby="basic-addon1" />
+                    <input onChange={handleChange} name="product" type="text" class="form-control" placeholder="New Food" aria-label="New Food" aria-describedby="basic-addon1" />
                 </div>
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="basic-addon1">Calories</span>

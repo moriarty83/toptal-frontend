@@ -16,7 +16,7 @@ function Auth (props) {
     const {state, dispatch} = useAppState()
 
     const [formData, setFormData] = useState({
-        email: "",
+        username: "",
         password: ""
     })
 
@@ -26,9 +26,10 @@ function Auth (props) {
 
     React.useEffect(()=>{
         if (userData){
-            const {token, user, exp} = userData;
-            dispatch({type: "auth", payload: { token, email: user.email, icon: user.icon, exp}})
-            window.localStorage.setItem("auth", JSON.stringify({ token, email: user.email, nickname: user.nickname, icon: user.icon, exp: exp}))   
+            
+            const {token} = userData;
+            dispatch({type: "auth", payload: { token }})
+            window.localStorage.setItem("auth", JSON.stringify({ token}))   
         }
     }, [userData])    
 
@@ -39,13 +40,13 @@ function Auth (props) {
                 return
             }
             else{
-                return fetch(state.url+ "/users/",{
+                return fetch(state.url+ "users/",{
                     
                     method: "post",
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({email: formData.email, password:formData.password, nickname: formData.nickname})
+                    body: JSON.stringify({username: formData.username, password:formData.password})
                 })
                 .then( response => response.json()
                 )
@@ -53,7 +54,7 @@ function Auth (props) {
         },
         
         login: ()=>{
-            return fetch(state.url+ "/login/",{
+            return fetch(state.url+ "login/",{
                 method: "post",
                 headers: {
                     "Content-Type": "application/json"
@@ -113,6 +114,8 @@ function Auth (props) {
                                 className="block border border-grey-light w-full p-3 rounded mb-4"
                                 name="confirm_password"
                                 placeholder="Confirm Password" />
+                                <button onClick={handleSubmit}>Submit</button>
+
                         </form>
                         <div className="text-center text-sm text-grey-dark mt-4">
                             By signing up, you agree to the 
@@ -156,6 +159,8 @@ function Auth (props) {
                         type="submit"
                         className="w-full text-center py-3 rounded bg-green-600 text-white hover:bg-green-dark focus:outline-none my-1"
                     >Login</button>
+                    <button onClick={handleSubmit}>Submit</button>
+
                     </form>
 
 
