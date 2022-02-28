@@ -9,6 +9,8 @@ import { useAppState } from './AppState'
 import Home from './pages/Home';
 import Auth from './pages/Auth';
 import NewEntry from './pages/NewEntry';
+import Admin from './pages/Admin'
+import Update from './pages/Update'
 
 function App() {
 
@@ -17,7 +19,7 @@ function App() {
   
   const auth = JSON.parse(window.localStorage.getItem("auth"))
   const token = window.localStorage.getItem("auth") ? JSON.parse(window.localStorage.getItem("auth")).token : ""
-
+  const user = JSON.parse(window.localStorage.getItem("data")).user
 
   ///////////////////////
   // METHODS
@@ -46,6 +48,10 @@ function App() {
         <Route exact path="/" element={<Home/>} />
         <Route path="/auth" element={<Auth/>} />
         <Route path="/new" element={<NewEntry newFoodEntry={newFoodEntry}/>} />
+        {user.admin ? <><Route path="/admin" element={<Admin />} />
+        <Route path="/admin/:id" element={<Update newFoodEntry={newFoodEntry}/>} />
+</> : ""}
+        
 
       </Routes>
     </div>

@@ -27,9 +27,11 @@ function Auth (props) {
     React.useEffect(()=>{
         if (userData){
             
-            const {token} = userData;
+            const {token, user} = userData;
+
             dispatch({type: "auth", payload: { token }})
-            window.localStorage.setItem("auth", JSON.stringify({ token}))   
+            window.localStorage.setItem("auth", JSON.stringify({ token}))  
+            window.localStorage.setItem("data", JSON.stringify({ user }))  
         }
     }, [userData])    
 

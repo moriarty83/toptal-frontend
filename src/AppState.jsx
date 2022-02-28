@@ -7,6 +7,8 @@ import React, { useReducer } from 'react';
 
 const initialState = {
     url: process.env.REACT_APP_TOPTAL_URL,
+    appID: process.env.REACT_APP_ID,
+    key: process.env.REACT_APP_KEY,
     token: null,
     username: null,
 }

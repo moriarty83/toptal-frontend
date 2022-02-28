@@ -2,6 +2,10 @@ import {useState, useEffect} from 'react'
 import { useAppState } from '../AppState'
 
 function NewEntry({newFoodEntry}){
+
+    //////////////
+    // Variables
+    //////////////
     const {state, dispatch} = useAppState()
 
     const [formData, setFormData] = useState({
@@ -9,7 +13,13 @@ function NewEntry({newFoodEntry}){
         calories: 0
     })
 
+    const [suggestion, setSuggestion] = useState()
+
+    /////////////
+    // METHODS
+    //////////////
     const handleChange = (event) =>{
+        getSuggestion()
         setFormData({...formData, [event.target.name]: event.target.value})
     }
 
@@ -37,8 +47,33 @@ function NewEntry({newFoodEntry}){
         .catch((error) => {window.alert(error)}
         );
     }
+
+    const getSuggestion = ()=>{
+        return fetch("https://trackapi.nutritionix.com/v2/natural/nutrients",{
+            method: "post",
+            headers: {
+                "x-app-id": state.appID,
+                "x-app-key": state.key,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({query:formData.product}) 
+               
+            })
+            .then( (response) => {
+                if(response.ok){
+                    return response.json()
+                }
+                else{
+                    throw new Error("An error of type " + response.status + " occured")
+                };
+            })
+            .then((data)=>{
+                console.log(data)})
+            .catch((error) => {window.alert(error)}
+            );
+    }
     return(
-        <div>
+        <div className='card'>
             <h1>New Food Entry</h1>
             <form onSubmit={handleSubmit}>
                 <div class="input-group mb-3">
