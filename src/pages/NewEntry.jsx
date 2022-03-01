@@ -13,7 +13,8 @@ function NewEntry({newFoodEntry}){
         calories: 0
     })
 
-    const [suggestion, setSuggestion] = useState()
+
+    const [suggestions, setSuggestions] = useState()
 
     /////////////
     // METHODS
@@ -23,9 +24,9 @@ function NewEntry({newFoodEntry}){
         if(event.target.name === 'product'){
             getSuggestion(event)
         }
-        else{
-            setFormData({...formData, [event.target.name]: event.target.value})        
-        }
+
+        setFormData({...formData, [event.target.name]: event.target.value})        
+
 
     }
 
@@ -58,7 +59,7 @@ function NewEntry({newFoodEntry}){
         const key = event.target.name
         const value = event.target.value
 
-        let suggestion = await fetch("https://trackapi.nutritionix.com/v2/natural/nutrients",{
+        let suggestion = await fetch("https://trackapi.nutritionix.com/v2/search/instant",{
             method: "post",
             headers: {
                 "x-app-id": state.appID,
@@ -68,30 +69,72 @@ function NewEntry({newFoodEntry}){
             body: JSON.stringify({query:value}) 
                
             })
-            .then( (response) => {
-                console.log(response.status)
-                if(response.status === 200)
+            .then( (response) => {                
                 {return response.json()}
-                else return 
             })
-            // .then((data)=>{
-                
-
-            //     })
-            // .catch((error) => {window.alert(error)}
-        // );
-        console.log(suggestion)
-        suggestion ? setFormData({...formData, calories: suggestion.foods[0].nf_calories}) : setSuggestion()
-
+            .then((data) => {
+                let items = data.common.slice(0, 5)
+                setSuggestions(items)
+            })
     }
+
+    const getFood = (food) =>{
+        fetch("https://trackapi.nutritionix.com/v2/natural/nutrients ",{
+            method: "post",
+            headers: {
+                "x-app-id": state.appID,
+                "x-app-key": state.key,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({query:food}) 
+               
+            })
+            .then( (response) => {                
+                {return response.json()}
+            })
+            .then((data) => {  
+                setFormData({...formData, product: data.food[0].food_name, calories: data.food[0].nf_calories})
+                console.log(data)
+            })
+    }
+
+
+    const showSuggestions = ()=>{
+
+        const rows = suggestions.map((element, index)=>{
+            return(
+                <tr key={index} onClick={()=>{getFood(element.food_name)}}>
+                    <td><img src={element.photo.thumb} alt={element.food_name + " thumnail"} className="thumb"/></td>
+                    <td>{element.food_name}</td>
+                </tr>
+            )
+        })
+        
+        return(
+            <table className="table table-dark table-striped">
+                <tbody>
+                    {rows}
+                </tbody>
+            </table>
+        )
+    }
+
+
+
+    ////////////
+    // RENDER
+    ////////////
     return(
+        <div className='entry'>
         <div className='card'>
             <h1>New Food Entry</h1>
+
             <form onSubmit={handleSubmit}>
                 <div className="input-group mb-3">
                     <span className="input-group-text" id="basic-addon1">Food Name</span>
                     <input onChange={handleChange} name="product" value={formData.product} type="text" className="form-control" placeholder="New Food" aria-label="New Food" aria-describedby="basic-addon1" />
                 </div>
+
                 <div className="input-group mb-3">
                     <span className="input-group-text" id="basic-addon1">Calories</span>
                     <input onChange={handleChange} name="calories" value={formData.calories} type="number" className="form-control" placeholder="New Food" aria-label="New Food" aria-describedby="basic-addon1" />
@@ -106,7 +149,11 @@ function NewEntry({newFoodEntry}){
                 </div>
                 <input type="submit" />
             </form>
-            <p>{formData.calories}</p>
+
+        </div>
+            <div className='suggestions'>
+                {suggestions ? showSuggestions() : ""} 
+            </div>
         </div>
     )
 }

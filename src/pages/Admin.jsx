@@ -247,11 +247,12 @@ function Admin (props){
 
     return (
         <>
+        <h1>Admin</h1>
         {entries ? loaded() : loading()}
 
         
 
-        <div className="form">
+        <div className="card">
             <h1>New Food Entry</h1>
             <form onSubmit={handleSubmit}>
                 <div class="input-group mb-3">

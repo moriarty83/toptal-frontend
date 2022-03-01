@@ -11,6 +11,7 @@ import Auth from './pages/Auth';
 import NewEntry from './pages/NewEntry';
 import Admin from './pages/Admin'
 import Update from './pages/Update'
+import Nav from './componenets/Nav'
 
 function App() {
 
@@ -44,6 +45,7 @@ function App() {
   }
   return (
     <div className="App">
+      <Nav user={user} />
       <Routes>
         <Route exact path="/" element={<Home/>} />
         <Route path="/auth" element={<Auth/>} />

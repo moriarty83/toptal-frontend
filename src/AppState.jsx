@@ -23,7 +23,6 @@ const reducer = (state, action)=>{
     switch(action.type){
         case  "auth":
             console.log(action.payload)
-            alert("auth")
             newState = {...state, ...action.payload}
             return newState
         case "logout":
